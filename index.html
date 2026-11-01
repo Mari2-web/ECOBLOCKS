@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECOSLAG NL | Simulador</title>
+
+<style>
+:root {
+  --cream: #F6F3EA;
+  --paper: #FFFEFA;
+  --green: #355B45;
+  --dark-green: #284936;
+  --sage: #DCE6D8;
+  --light-sage: #EEF2E9;
+  --terracotta: #C9825B;
+  --blue: #83AEB0;
+  --ink: #29372E;
+  --muted: #6C786E;
+  --line: #E5E7DE;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: Arial, sans-serif;
+  line-height: 1.55;
+}
+
+.topbar {
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav {
+  max-width: 1080px;
+  margin: auto;
+  padding: 14px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--green);
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.brand-icon {
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--green);
+  color: white;
+}
+
+.nav-note {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.hero {
+  max-width: 1080px;
+  margin: auto;
+  padding: 48px 22px 32px;
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 30px;
+  align-items: center;
+}
+
+.eyebrow {
+  color: var(--green);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 12px 0 15px;
+  color: var(--green);
+  font-size: clamp(38px, 5vw, 58px);
+  line-height: 1.05;
+}
+
+.hero p {
+  max-width: 630px;
+  color: #58665C;
+}
+
+.hero-art {
+  min-height: 220px;
+  padding: 20px;
+  border-radius: 25px;
+  background: var(--sage);
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.art-label {
+  position: absolute;
+  top: 16px;
+  left: 19px;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.blocks {
+  height: 145px;
+  width: 280px;
+  position: relative;
+  margin-top: 22px;
+}
+
+.block {
+  position: absolute;
+  bottom: 18px;
+  width: 115px;
+  height: 57px;
+  border-radius: 8px;
+  transform: skewY(-8deg);
+  box-shadow: inset 0 -7px rgba(60,60,45,.12),
+              0 8px 13px rgba(55,75,57,.12);
+}
+
+.block:after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(255,255,255,.4);
+  border-radius: 5px;
+}
+
+.block.one {
+  left: 8px;
+  background: #A9A18C;
+}
+
+.block.two {
+  left: 84px;
+  bottom: 34px;
+  background: #C5B28E;
+}
+
+.block.three {
+  left: 160px;
+  bottom: 50px;
+  background: #91A58C;
+}
+
+main {
+  max-width: 1080px;
+  margin: auto;
+  padding: 0 22px 55px;
+}
+
+.section-title {
+  margin: 18px 0 16px;
+}
+
+h2 {
+  margin: 0;
+  color: var(--green);
+  font-size: 26px;
+}
+
+.section-title p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.simulator {
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 21px;
+  padding: 23px;
+  box-shadow: 0 12px 30px rgba(43,68,51,.07);
+}
+
+h3 {
+  margin: 0 0 5px;
+  color: var(--green);
+  font-size: 19px;
+}
+
+.panel-intro {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.control {
+  margin: 21px 0;
+}
+
+.control-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.control label {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.value {
+  min-width: 65px;
+  padding: 4px 9px;
+  border-radius: 9px;
+  background: var(--light-sage);
+  color: var(--green);
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--green);
+  cursor: pointer;
+}
+
+.range-ends {
+  display: flex;
+  justify-content: space-between;
+  color: #929A91;
+  font-size: 11px;
+}
+
+.help {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 24px;
+}
+
+button {
+  border: 0;
+  border-radius: 11px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid rgba(201,130,91,.45);
+  outline-offset: 3px;
+}
+
+.primary {
+  background: var(--green);
+  color: white;
+}
+
+.primary:hover {
+  background: var(--dark-green);
+}
+
+.secondary {
+  background: var(--light-sage);
+  color: var(--green);
+}
+
+.secondary:hover {
+  background: var(--sage);
+}
+
+.total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.total-row span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.total-row strong {
+  color: var(--green);
+  font-size: 22px;
+}
+
+.bar {
+  display: flex;
+  height: 19px;
+  margin: 17px 0 20px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #EDF0E9;
+}
+
+.segment {
+  height: 100%;
+  transition: width .2s ease;
+}
+
+.residue-segment {
+  background: #8A9D7D;
+}
+
+.activator-segment {
+  background: var(--terracotta);
+}
+
+.water-segment {
+  background: var(--blue);
+}
+
+.legend {
+  display: grid;
+  gap: 11px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.legend-name {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #536055;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.legend-row strong {
+  color: var(--ink);
+}
+
+.days-box {
+  margin-top: 19px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.days-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.days-number {
+  color: var(--green);
+  font-size: 27px;
+  font-weight: bold;
+}
+
+.feedback {
+  min-height: 92px;
+  margin-top: 19px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--light-sage);
+  color: #526052;
+  font-size: 13px;
+}
+
+.feedback strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--green);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.info-card,
+.company-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  padding: 17px;
+}
+
+.info-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: var(--light-sage);
+  font-size: 17px;
+}
+
+.info-card h3 {
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.info-card p,
+.company-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.companies {
+  margin-top: 36px;
+}
+
+.company-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.company-card strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--green);
+}
+
+.notice {
+  margin-top: 23px;
+  padding: 16px 18px;
+  border: 1px solid #EBD8C0;
+  border-radius: 15px;
+  background: #F6EBDD;
+  color: #73583E;
+  font-size: 12px;
+}
+
+.notice strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #805C37;
+}
+
+footer {
+  padding: 23px 18px;
+  background: var(--green);
+  color: #E8EFE7;
+  text-align: center;
+  font-size: 12px;
+}
+
+footer strong {
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+@media (max-width: 780px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: 35px;
+  }
+
+  .hero-art {
+    min-height: 185px;
+  }
+
+  .simulator {
+    grid-template-columns: 1fr;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .company-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .nav,
+  .hero,
+  main {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .nav-note {
+    display: none;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="nav">
+    <div class="brand">
+      <span class="brand-icon">E</span>
+      ECOSLAG NL
+    </div>
+    <div class="nav-note"> Nuevo León</div>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="eyebrow">Una idea para aprovechar residuos</div>
+    <h1>De residuo a<br>material útil.</h1>
+    <p>
+      En este proyecto investigamos si el material que sobra durante
+      la fabricación del acero podría aprovecharse en productos de
+      construcción. En el simulador puedes cambiar cantidades y
+      comparar ejemplos de mezclas.
+    </p>
+  </div>
+
+  <div class="hero-art" aria-label="Ilustración de bloques de construcción">
+    <div class="art-label">ECOSLAG SIMULATOR</div>
+    <div class="blocks">
+      <div class="block one"></div>
+      <div class="block two"></div>
+      <div class="block three"></div>
+    </div>
+  </div>
+</section>
+
+<main>
+
+  <section class="section-title">
+    <h2>Prueba una mezcla</h2>
+    <p>Mueve los controles para cambiar las cantidades que se muestran.</p>
+  </section>
+
+  <section class="simulator">
+
+    <div class="panel">
+      <h3>Arma tu mezcla</h3>
+      <p class="panel-intro">
+        Los controles sirven para visualizar proporciones.
+        No son una receta comprobada.
+      </p>
+
+      <div class="control">
+        <div class="control-head">
+          <label for="residue">Residuo de la fabricación del acero</label>
+          <output class="value" id="residueValue">6 partes</output>
+        </div>
+        <input id="residue" type="range" min="1" max="10" value="6">
+        <div class="range-ends"><span>1 parte</span><span>10 partes</span></div>
+        <div class="help">
+          Es el material que queremos investigar para darle otro uso.
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="control-head">
+          <label for="activator">Activador alcalino</label>
+          <output class="value" id="activatorValue">2 partes</output>
+        </div>
+        <input id="activator" type="range" min="1" max="10" value="2">
+        <div class="range-ends"><span>1 parte</span><span>10 partes</span></div>
+        <div class="help">
+          Puede ayudar a que reaccionen algunos componentes del residuo.
+          El tipo y la cantidad dependen de su composición.
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="control-head">
+          <label for="water">Agua</label>
+          <output class="value" id="waterValue">2 partes</output>
+        </div>
+        <input id="water" type="range" min="1" max="10" value="2">
+        <div class="range-ends"><span>1 parte</span><span>10 partes</span></div>
+        <div class="help">
+          Se considera para preparar la mezcla; su cantidad también
+          tendría que estudiarse.
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="control-head">
+          <label for="days">Días de reposo</label>
+          <output class="value" id="daysValue">7 días</output>
+        </div>
+        <input id="days" type="range" min="1" max="28" value="7">
+        <div class="range-ends"><span>1 día</span><span>28 días</span></div>
+        <div class="help">
+          Es el tiempo que se deja la mezcla en reposo para que se
+          endurezca. En investigaciones también se le llama
+          tiempo de curado.
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button class="primary" id="showMix" type="button">
+          Ver mi mezcla
+        </button>
+        <button class="secondary" id="resetMix" type="button">
+          Volver al inicio
+        </button>
+      </div>
+    </div>
+
+    <div class="panel" aria-live="polite">
+      <h3>Así queda tu mezcla</h3>
+      <p class="panel-intro">
+        La barra muestra cómo se reparten las partes que elegiste.
+      </p>
+
+      <div class="total-row">
+        <span>Total de partes</span>
+        <strong id="totalParts">10</strong>
+      </div>
+
+      <div class="bar">
+        <div class="segment residue-segment" id="residueBar"></div>
+        <div class="segment activator-segment" id="activatorBar"></div>
+        <div class="segment water-segment" id="waterBar"></div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-row">
+          <span class="legend-name">
+            <i class="dot" style="background:#8A9D7D"></i>Residuo
+          </span>
+          <strong id="residueResult">60.0%</strong>
+        </div>
+
+        <div class="legend-row">
+          <span class="legend-name">
+            <i class="dot" style="background:#C9825B"></i>Activador
+          </span>
+          <strong id="activatorResult">20.0%</strong>
+        </div>
+
+        <div class="legend-row">
+          <span class="legend-name">
+            <i class="dot" style="background:#83AEB0"></i>Agua
+          </span>
+          <strong id="waterResult">20.0%</strong>
+        </div>
+      </div>
+
+      <div class="days-box">
+        <div class="days-label">Días de reposo seleccionados</div>
+        <div class="days-number" id="daysResult">7 días</div>
+      </div>
+
+      <div class="feedback" id="feedback">
+        <strong>Tu mezcla está representada.</strong>
+        Puedes mover los controles para comparar otro ejemplo.
+        La página no calcula la resistencia del material.
+      </div>
+    </div>
+
+  </section>
+
+  <section class="info-grid">
+
+    <article class="info-card">
+      
+      <h3>¿Qué es el residuo?</h3>
+      <p>
+        Es un material que se separa durante la fabricación del acero.
+        Su composición puede cambiar según el proceso y por eso
+        primero debe analizarse.
+      </p>
+    </article>
+
+    <article class="info-card">
+  
+      <h3>¿Qué hace el activador?</h3>
+      <p>
+        Un activador, como el hidróxido de sodio o el silicato de sodio,
+        puede ayudar a que reaccionen algunos componentes del material.
+      </p>
+    </article>
+
+    <article class="info-card">
+    
+      <h3>¿Qué buscamos?</h3>
+      <p>
+        Investigar si este residuo podría formar parte de materiales
+        para construcción, como blocks o ladrillos, después de
+        realizar pruebas.
+      </p>
+    </article>
+
+  </section>
+
+
+  <aside class="notice">
+    <strong>Importante: este es un prototipo </strong>
+    Las cantidades del simulador son partes ilustrativas para
+    comparar proporciones. No son una fórmula real ni comprobada.
+    La composición del residuo puede variar. Antes de fabricar un
+    producto se tendría que identificar y analizar el material, y
+    hacer pruebas de resistencia, absorción de agua y seguridad.
+    El simulador no predice esos resultados.
+  </aside>
+
+</main>
+
+<footer>
+  <strong>ECOSLAG NL</strong><br>
+  LEMA.
+</footer>
+
+<script>
+const initial = {
+  residue: 6,
+  activator: 2,
+  water: 2,
+  days: 7
+};
+
+const ids = ["residue", "activator", "water", "days"];
+
+const controls = {};
+ids.forEach(id => {
+  controls[id] = document.getElementById(id);
+});
+
+function plural(n) {
+  return n === 1 ? "parte" : "partes";
+}
+
+function dayText(n) {
+  return n === 1 ? "1 día" : `${n} días`;
+}
+
+function update() {
+  const residue = Number(controls.residue.value);
+  const activator = Number(controls.activator.value);
+  const water = Number(controls.water.value);
+  const days = Number(controls.days.value);
+
+  const total = residue + activator + water;
+
+  const residuePercent = residue / total * 100;
+  const activatorPercent = activator / total * 100;
+  const waterPercent = water / total * 100;
+
+  document.getElementById("residueValue").textContent =
+    `${residue} ${plural(residue)}`;
+
+  document.getElementById("activatorValue").textContent =
+    `${activator} ${plural(activator)}`;
+
+  document.getElementById("waterValue").textContent =
+    `${water} ${plural(water)}`;
+
+  document.getElementById("daysValue").textContent = dayText(days);
+
+  document.getElementById("totalParts").textContent = total;
+
+  document.getElementById("residueBar").style.width =
+    `${residuePercent}%`;
+
+  document.getElementById("activatorBar").style.width =
+    `${activatorPercent}%`;
+
+  document.getElementById("waterBar").style.width =
+    `${waterPercent}%`;
+
+  document.getElementById("residueResult").textContent =
+    `${residuePercent.toFixed(1)}%`;
+
+  document.getElementById("activatorResult").textContent =
+    `${activatorPercent.toFixed(1)}%`;
+
+  document.getElementById("waterResult").textContent =
+    `${waterPercent.toFixed(1)}%`;
+
+  document.getElementById("daysResult").textContent = dayText(days);
+
+  const values = {
+    residue: residuePercent,
+    activator: activatorPercent,
+    water: waterPercent
+  };
+
+  const largest = Object.entries(values)
+    .sort((a, b) => b[1] - a[1])[0][0];
+
+  const messages = {
+    residue: [
+      "Hay más residuo.",
+      "En este ejemplo, el residuo ocupa la mayor proporción. Esto no significa que la mezcla sea adecuada para fabricar un block."
+    ],
+    activator: [
+      "Hay más activador.",
+      "En este ejemplo, el activador ocupa la mayor proporción. Su tipo y cantidad tendrían que definirse mediante análisis y pruebas."
+    ],
+    water: [
+      "Hay más agua.",
+      "En este ejemplo, el agua ocupa la mayor proporción. La cantidad de agua puede cambiar el comportamiento de la mezcla."
+    ]
+  };
+
+  document.getElementById("feedback").innerHTML =
+    `<strong>${messages[largest][0]}</strong>
+    ${messages[largest][1]}
+    La página no calcula la resistencia del material.`;
+}
+
+ids.forEach(id => {
+  controls[id].addEventListener("input", update);
+});
+
+document.getElementById("showMix").addEventListener("click", update);
+
+document.getElementById("resetMix").addEventListener("click", () => {
+  ids.forEach(id => {
+    controls[id].value = initial[id];
+  });
+
+  update();
+});
+
+update();
+</script>
+
+</body>
+</html>
